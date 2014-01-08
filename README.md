@@ -74,7 +74,7 @@ class to apply to an element after it has been loaded
 
 ### placeholder
 Type: `string`
-Default: `//edge.ldscdn.org/images/1x1.gif`
+Default: `data:image/gif;base64,R0lGODlhAQABAPAAAAAAAAAAACH/C1hNUCBEYXRhWE1QRT94cGFja2V0IDE2MDZCIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkZERDQ1MzVGMkZGMTExRTFBQTE4OTE5ODk4MQAh+QQFAAAAACwAAAAAAQABAEACAkQBADs=`
 
 url (base64 encoded or actual URL) of an image to load as a placeholder until the real image is loaded
 
