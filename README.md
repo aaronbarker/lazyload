@@ -157,6 +157,9 @@ Default: ``
 method you can call to load a given image, or custom event on the image itself. useful if you want to load a specific hidden image.  Pass in the image that you want to load
 
 ## Changelog
+### 1.4.1
+* Moving the setting of the image opacity to within the loop where it changes from noscript to placeholder image. When it was just being fired on all images and you called the script multiple times, it would hide images that were already done.
+
 ### 1.4.0
 * First release onto github. Will fill in older information if time allows.
 * Removed some old timer functionality (would load another image every X seconds)
