@@ -7,12 +7,5 @@ charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
 
-# 4 space indentation
-[**.js]
+[*.js]
 indent_style = tab
-indent_size = 4
-
-# Indentation override for all JS under lib directory
-[resources/components/**.js, node_modules/**.js]
-indent_style = space
-indent_size = 2

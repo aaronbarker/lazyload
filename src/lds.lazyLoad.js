@@ -7,200 +7,260 @@
  * @copyright	Copyright 2013 by Intellectual Reserve, Inc.
  */
 (function($) {
-    "use strict";
-    $.widget("lds.lazyLoad", {
-        options: {
-            lazyClass: "lazy",
-            doneClass: "lazyLoadDone",
-            placeholder: "data:image/gif;base64,R0lGODlhAQABAPAAAAAAAAAAACH/C1hNUCBEYXRhWE1QRT94cGFja2V0IDE2MDZCIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkZERDQ1MzVGMkZGMTExRTFBQTE4OTE5ODk4MQAh+QQFAAAAACwAAAAAAQABAEACAkQBADs=",
-            updateOnResize: true,
-            attList: ["src", "width", "height", "alt", "class"], // list of data- attributes to make into real attributes in the <img>
+	"use strict";
+	var $window = $(window);
 
-            // timings and thresholds
-            threshold: 300, // how many pixels in advance before an image comes above the fold should the it be loaded
-            resizeDelay: 100, // running on every pixel of a scroll/resize is CPU intensive, delay how much?
-            fadeSpeed: 250, // how fast should an image fade
-            loadHidden: false, // should the script load hidden images
-            mustForce: false, // don't load unless forced (using loadNow). For use in carousels, etc
-            srcs: ["2x", "desktop", "mobile"], // in order of what you want to show first if it matches multiple
-            srcFallback: "desktop", // which source should we fall back if no tests match (ipad isn't desktop, but you didn't provide mobile)
-            tests: { // some basic high level tests for the above srcs. can be overwritten or extended
-                "2x": function() {
-                    return window.devicePixelRatio > 1;
-                },
-                "mobile": function() {
-                    return $(window).width() < 600;
-                },
-                "desktop": function() {
-                    return $(window).width() > 600;
-                }
-            }
-        },
-        _create: function() {
-            var opts = this.options,
-                self = this,
-                elem = self.element,
-                widgetName = self.widgetName,
-                doneClass = opts.doneClass,
-                images = "img." + opts.lazyClass,
-                imageSelector;
+	$.widget("lds.lazyLoad", {
+		options: {
+			lazyClass: "lazy",
+			doneClass: "lazyLoadDone",
+			placeholder: "data:image/gif;base64,R0lGODlhAQABAPAAAAAAAAAAACH/C1hNUCBEYXRhWE1QRT94cGFja2V0IDE2MDZCIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkZERDQ1MzVGMkZGMTExRTFBQTE4OTE5ODk4MQAh+QQFAAAAACwAAAAAAQABAEACAkQBADs=",
+			updateOnResize: true,
+			attList: ["src", "width", "height", "alt", "class"], // list of data- attributes to make into real attributes in the <img>
 
-            self.imageSelector = (opts.loadHidden) ? images : images + ":visible";
+			// timings and thresholds
+			threshold: 300, // how many pixels in advance before an image comes above the fold should the it be loaded
+			resizeDelay: 100, // running on every pixel of a scroll/resize is CPU intensive, delay how much?
+			fadeSpeed: 250, // how fast should an image fade
+			loadHidden: false, // should the script load hidden images
+			mustForce: false, // don't load unless forced (using loadNow). For use in carousels, etc
+			srcs: ["2x", "desktop", "mobile"], // in order of what you want to show first if it matches multiple
+			srcFallback: "desktop", // which source should we fall back if no tests match (ipad isn't desktop, but you didn't provide mobile)
+			tests: { // some basic high level tests for the above srcs. can be overwritten or extended
+				"2x": function() {
+					return window.devicePixelRatio > 1;
+				},
+				"mobile": function() {
+					return $(window).width() < 600;
+				},
+				"desktop": function() {
+					return $(window).width() > 600;
+				}
+			}
+		},
+		_create: function() {
+			var opts = this.options,
+				self = this,
+				elem = self.element,
+				widgetName = self.widgetName,
+				doneClass = opts.doneClass,
+				images = "img." + opts.lazyClass,
+				imageSelector;
 
-            imageSelector = self.imageSelector;
+			self.imageSelector = (opts.loadHidden) ? images : images + ":visible";
 
-            // add event to ALL matched images (hidden or not). so use images not imageSelector
-            $(elem).on("update." + widgetName, images, function(event, force) {
+			imageSelector = self.imageSelector;
 
-                var $this = $(this);
+			// add event to ALL matched images (hidden or not). so use images not imageSelector
+			$(elem).on("update." + widgetName, images, function(event, force) {
+				var $this = $(this);
 
-                if ($this.hasClass(doneClass)) {
+				//default `force` to false
+				force = (force === undefined) ? false : force;
 
-                    self.setSrc($this, self.getSrc($this), force);
+				if ($this.hasClass(doneClass)) {
 
-                } else {
+					self.setSrc($this, self.getSrc($this), force);
 
-                    self.checkLocation(this, force);
-                }
+				} else {
 
-            }).on("loadNow." + widgetName, images, function() {
-                self.loadNow(this);
-            });
-            // make all images (not just visible ones) faded out
-            // $(images,elem).css("opacity","0.01");
-            // scroll, obvious. resize, could bring more into view. orientation, same.
-            $(window).add(opts.secondaryScroll).bind("scroll." + widgetName + " resize." + widgetName + " orientationchange." + widgetName, function() {
-                clearTimeout(self.scrollTimer);
-                self.scrollTimer = setTimeout(function() {
-                    var images = $(imageSelector);
-                    if (!opts.updateOnResize) {
-                        images = images.not("." + doneClass);
-                    }
-                    // console.debug(imageSelector,images);
-                    self.viewportHeight = $(window).height();
-                    self.viewportTopY = $(window).scrollTop();
-                    self.viewportWidth = $(window).width();
-                    self.viewportLeftX = $(window).scrollLeft();
+					self.checkLocation(this, force);
+				}
 
-                    images.trigger("update." + widgetName, false);
-                }, self.initialized ? opts.resizeDelay : 0);
+			}).on("loadNow." + widgetName, images, function() {
+				self.loadNow(this);
+			});
+			// make all images (not just visible ones) faded out
+			// $(images,elem).css("opacity","0.01");
 
-            });
-            self.initialized = true;
-        },
-        _init: function() {
-            var self = this,
-                elem = self.element,
-                opts = self.options,
-                widgetName = self.widgetName,
-                noscript = "noscript." + opts.lazyClass;
+			// scroll, obvious. resize, could bring more into view. orientation, same.
+			$window.on(["scroll", "resize", "orientationchange"].join("." + widgetName + " "), function() {
 
-            $(noscript, elem).each(function() {
-                var cur = $(this),
-                    img = $("<img>");
-                $.each(opts.attList, function(index, value) {
-                    if (cur.data(value)) {
-                        // console.debug(cur.data(value));
-                        img.attr(value, cur.data(value) || "");
-                    }
-                });
-                $.each(cur.data(), function(index, value) {
-                    img.data(index, value);
-                });
-                img.addClass(opts.lazyClass)
-                    .attr("src", opts.placeholder);
-                if (!img.attr("height") && opts.minHeight) {
-                    img.attr("height", opts.minHeight);
-                }
-                $(this).before(img);
-                //remove the noscript
-                img.css("opacity", "0.01");
-                cur.remove();
-            });
+				clearTimeout(self.scrollTimer);
 
-            $(self.imageSelector, elem).not("." + self.options.doneClass).each(function() {
-                // check the sessionStorage to see if we have loaded this one before. If so, it's cached so load it now instead of waiting for a timer (more for mobile)
-                var newSrc = self.getSrc($(this));
-                // if we've tracked this src, then load it now. It won't hurt us since it's from cache
-                if (sessionStorage.getItem(newSrc)) {
-                    // console.debug("loading "+newSrc+"thanks to sessionStorage");
-                    $(this).trigger("update." + widgetName, true);
-                } else {
-                    $(this).trigger("update." + widgetName, false);
-                }
-            });
-            $(window).trigger("resize." + widgetName);
-        },
-        checkLocation: function(elem, force) {
-            var opts = this.options,
-                self = this,
-                newSrc,
-                extra = (/iphone|ipod/i.test(navigator.userAgent.toLowerCase())) ? 60 : 0,
-                theTarget = $(elem);
-            // console.debug(theTarget);
-            if (((!theTarget.hasClass(opts.doneClass) || opts.updateOnResize) && (opts.loadHidden || (!opts.loadHidden && theTarget.is(":visible"))) && (theTarget.offset().top < (self.viewportTopY + self.viewportHeight) + opts.threshold + extra) && (theTarget.offset().left < (self.viewportLeftX + self.viewportWidth) + opts.threshold + extra) && !opts.mustForce && !theTarget.data("mustforce")) || force) {
-                newSrc = self.getSrc(theTarget);
+				self.scrollTimer = setTimeout(function() {
+					var $images = $(imageSelector);
 
-                self.setSrc(theTarget, newSrc, force);
-                if (opts.minHeight && !theTarget.data("height")) {
-                    theTarget.attr("height", "");
-                }
-                //mark as done, either way. So we don't keep trying it
-                theTarget.addClass(opts.doneClass);
+					if (!opts.updateOnResize) {
+						$images = $images.not("." + doneClass);
+					}
 
-            }
-        },
-        getSrc: function(elem) {
-            var opts = this.options,
-                newSrc, testResult;
-            $.each(opts.srcs, function(key, value) {
-                testResult = typeof(opts.tests[value]) === "function" ? opts.tests[value].call() : opts.tests[value];
-                // console.debug("testing ",value, testResult);
+					self.viewportHeight = $window.height();
+					self.viewportTopY = $window.scrollTop();
+					self.viewportWidth = $window.width();
+					self.viewportLeftX = $window.scrollLeft();
 
-                if (elem.data(value) && opts.tests[value].call()) {
-                    // console.debug("is",value);
-                    newSrc = elem.data(value);
-                    return false;
-                }
-            });
-            if (!newSrc) {
-                newSrc = elem.data(opts.srcFallback);
-            }
-            return newSrc;
-        },
-        setSrc: function(elem, newSrc, force) {
-            var opts = this.options,
-                self = this;
-            if (newSrc && newSrc !== elem.attr("src")) {
-                // console.debug("loading "+newSrc);
-                // set the src to the newSrc so it will load
-                elem.attr("src", newSrc).fadeTo(force ? 0 : opts.fadeSpeed, 1);
-                // track the image we loaded so we can know to not to wait to load it again this session, we can do it immediately since it won't hurt us (from cache)
-                // our good friend IE8 will put in 1 for h/w if one isn't provided. so remove it if there wasn't one to set
-                if (!elem.data("width")) {
-                    elem.removeAttr("width");
-                }
-                if (!elem.data("height")) {
-                    elem.removeAttr("height");
-                }
-                sessionStorage.setItem(newSrc, "loaded");
-                elem.off("load.lazyLoad").on("load.lazyLoad", function() {
-                    self._trigger("onload", false, elem);
-                });
-            }
-        },
-        // external way to call into script to force a loading of the approrpate source right now
-        loadNow: function(elem) {
-            // make this load the current image
-            this.checkLocation(elem, true);
-        },
-        destroy: function() {
-            $.Widget.prototype.destroy.apply(this, arguments); // call the default stuff
-            $(this.element).add(window).unbind("." + this.widgetName);
-        }
+					$images.trigger("update." + widgetName);
 
-    });
-    $.extend($.lds.lazyLoad, {
-        version: "@@version"
-    });
+				}, self.initialized ? opts.resizeDelay : 0);
+
+			});
+
+			self.initialized = true;
+		},
+		_init: function() {
+			var self = this,
+				elem = self.element,
+				opts = self.options,
+				widgetName = self.widgetName,
+				noscript = "noscript." + opts.lazyClass;
+
+			self.viewportHeight = $window.height();
+			self.viewportTopY = $window.scrollTop();
+			self.viewportWidth = $window.width();
+			self.viewportLeftX = $window.scrollLeft();
+
+			$(noscript, elem).each(function() {
+				var $cur = $(this),
+					$img = $("<img>"),
+					h = $img.attr("height") || opts.minHeight || "";
+
+				// Apply attributes from attList to new image.
+				opts.attList.forEach(function(attr) {
+					$img.attr(attr, $cur.data(attr) || "");
+				});
+
+				// Apply data values from current image to new image.
+				$img.data($cur.data());
+
+				// Add the lazyClass to the new image and an appropriate placeholder image.
+				$img.addClass(opts.lazyClass)
+					.attr("src", opts.placeholder);
+
+				// If no `height` attribute is set, set it to minHieght in opts
+				$img.height(h);
+
+				//remove the noscript
+				$cur.replaceWith($img);
+				$img.css("opacity", "0.01");
+			});
+
+			$(self.imageSelector, elem).not("." + self.options.doneClass).each(function() {
+				var $this = $(this),
+					newSrc = self.getSrc($this),
+
+					// Load now if in cache, catch errors thrown in some private browsing modes.
+					isForce = (function() {
+						try {
+							return !!sessionStorage.getItem(newSrc);
+						} catch (e) {
+							return false;
+						}
+					})();
+
+				$this.trigger("update." + widgetName, isForce);
+			});
+
+			$window.trigger("resize." + widgetName);
+		},
+		checkLocation: function(elem, force) {
+			var opts = this.options,
+				self = this,
+				newSrc,
+				extra = (/iphone|ipod/i.test(navigator.userAgent.toLowerCase())) ? 60 : 0,
+				$theTarget = $(elem),
+				dontForce = !opts.mustForce && !$theTarget.data("mustforce"),
+
+				isInBounds = function() {
+					var isInBoundsY = ($theTarget.offset().top < (self.viewportTopY + self.viewportHeight) + opts.threshold + extra),
+						isInBoundsX = ($theTarget.offset().left < (self.viewportLeftX + self.viewportWidth) + opts.threshold + extra);
+
+					return isInBoundsY && isInBoundsX;
+
+				};
+
+			// optimized for best short-circuting
+
+			// derive a new source if...
+			if (
+				// we're forcing or...
+				force || (
+					//there's been a resize or the target doesn't have a done class and...
+					(opts.updateOnResize || !$theTarget.hasClass(opts.doneClass)) &&
+
+					//there is a setting to load hidden images or the target is visible and...
+					(opts.loadHidden || $theTarget.is(":visible")) &&
+
+					// the target is in-bounds
+					isInBounds() &&
+
+					//we are not compelling a force laod.
+					dontForce
+				)
+			) {
+				newSrc = self.getSrc($theTarget);
+
+				self.setSrc($theTarget, newSrc, force);
+
+				if (opts.minHeight && !$theTarget.data("height")) {
+					$theTarget.removeAttr("height");
+				}
+
+				//mark as done, either way. So we don't keep trying it
+				$theTarget.addClass(opts.doneClass);
+			}
+		},
+		getSrc: function(elem) {
+			var opts = this.options,
+				newSrc, testResult;
+
+			opts.srcs.forEach(function(src) {
+
+				var testValue = opts.tests[src].call(elem);
+
+				testResult = typeof opts.tests[src] === "function" ? testValue : opts.tests[src];
+
+				if (elem.data(src) && testValue) {
+
+					newSrc = elem.data(src);
+				}
+			});
+
+			return newSrc || elem.data(opts.srcFallback);
+		},
+		setSrc: function($elem, newSrc) {
+			var opts = this.options,
+				self = this;
+
+			if (newSrc && newSrc !== $elem.attr("src")) {
+
+				$elem.on("load", function() {
+					$elem.stop(true).fadeTo(opts.fadeSpeed, 1);
+				});
+
+				// set the src to the newSrc so it will load
+				$elem.fadeTo(opts.fadeSpeed, 0.01).attr("src", newSrc);
+
+				// our good friend IE8 will put in 1 for h/w if one isn't provided. so remove it if there wasn't one to set
+				if (!$elem.data("width")) {
+					$elem.removeAttr("width");
+				}
+				if (!$elem.data("height")) {
+					$elem.removeAttr("height");
+				}
+
+				// track the image we loaded so we can know to not to wait to load it again this session, we can do it immediately since it won't hurt us (from cache)
+				try {
+					sessionStorage.setItem(newSrc, "loaded");
+				} catch (e) {}
+
+				$elem.off("load.lazyLoad").on("load.lazyLoad", function() {
+					self._trigger("onload", false, $elem);
+				});
+			}
+		},
+		// external way to call into script to force a loading of the approrpate source right now
+		loadNow: function(elem) {
+			// make this load the current image
+			this.checkLocation(elem, true);
+		},
+		destroy: function() {
+			$.Widget.prototype.destroy.apply(this, arguments); // call the default stuff
+			$(this.element).add(window).unbind("." + this.widgetName);
+		}
+
+	});
+	$.extend($.lds.lazyLoad, {
+		version: "@@version"
+	});
 })(jQuery);
