@@ -25,14 +25,6 @@ module.exports = function(grunt) {
 				expand: true,
 				src: "*.js",
 				dest: "dist/"
-				// files: [{
-				// 	// Files to perform replacements and includes with
-				// 	src: "src/*.js",
-				// 	// Destinaion directory to copy files to
-				// 	dest: "dist/",
-				// 	expand: true,
-				// 	cwd: "src/"
-				// }]
 			}
 		},
 		// https://github.com/gruntjs/grunt-contrib-uglify
