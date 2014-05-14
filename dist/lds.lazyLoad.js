@@ -1,7 +1,7 @@
 /*!
  * lazyLoad
  * @description	loads images onto the page as you scroll down to them
- * @version		1.4.0 - 2014/01/07
+ * @version		1.4.1 - 2014/04/24
  * @author		Aaron Barker
  * @requires	ui.core.js (1.8+)
  * @copyright	Copyright 2013 by Intellectual Reserve, Inc.
@@ -55,7 +55,7 @@
 				self.loadNow(this);
 			});
 			// make all images (not just visible ones) faded out
-			$(images,elem).css("opacity","0.01");
+			// $(images,elem).css("opacity","0.01");
 			// scroll, obvious. resize, could bring more into view. orientation, same.
 			$(window).add(opts.secondaryScroll).bind("scroll."+widgetName+" resize."+widgetName+" orientationchange."+widgetName,function(){
 				clearTimeout(self.scrollTimer);
@@ -100,6 +100,7 @@
 				}
 				$(this).before(img);
 				//remove the noscript
+				img.css("opacity","0.01");
 				cur.remove();
 			});
 
@@ -184,6 +185,6 @@
 		
 	});
 	$.extend( $.lds.lazyLoad, {
-		version: "1.4.0"
+		version: "1.4.1"
 	});
 })(jQuery);

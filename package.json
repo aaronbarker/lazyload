@@ -5,7 +5,7 @@
   "url": "https://github.com/aaronbarker/lazyload",
   "author": "Aaron Barker",
   "copyright": "2013",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-watch": "~0.4.4",
