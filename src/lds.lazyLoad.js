@@ -205,16 +205,19 @@
 			var opts = this.options,
 				newSrc, testResult;
 
-			opts.srcs.forEach(function(src) {
+			opts.srcs.some(function(src) {
 
-				var testValue = opts.tests[src].call(elem);
+				var elSrc = elem.data(src);
 
-				testResult = typeof opts.tests[src] === "function" ? testValue : opts.tests[src];
+				testResult = typeof opts.tests[src] === "function" ? !! opts.tests[src].call(elem) : !! opts.tests[src];
 
-				if (elem.data(src) && testValue) {
+				if (testResult && elSrc) {
 
-					newSrc = elem.data(src);
+					newSrc = elSrc;
 				}
+
+				// Stop iterating if we've found a new src.
+				return !!newSrc;
 			});
 
 			return newSrc || elem.data(opts.srcFallback);
