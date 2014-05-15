@@ -1,7 +1,7 @@
 /*!
  * lazyLoad
  * @description	loads images onto the page as you scroll down to them
- * @version		1.5.1 - 2014 / 05 / 14 
+ * @version		1.5.0 - 2014 / 05 / 15 
  * @author		Aaron Barker
  * @requires	ui.core.js (1.8+)
  * @copyright	Copyright 2013 by Intellectual Reserve, Inc.
@@ -16,6 +16,7 @@
 			doneClass: "lazyLoadDone",
 			placeholder: "data:image/gif;base64,R0lGODlhAQABAPAAAAAAAAAAACH/C1hNUCBEYXRhWE1QRT94cGFja2V0IDE2MDZCIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkZERDQ1MzVGMkZGMTExRTFBQTE4OTE5ODk4MQAh+QQFAAAAACwAAAAAAQABAEACAkQBADs=",
 			updateOnResize: true,
+			secondaryScroll: "", // if there is a horizontally scrolling element, pass that in to get a scroll event added to it
 			attList: ["src", "width", "height", "alt", "class"], // list of data- attributes to make into real attributes in the <img>
 
 			// timings and thresholds
@@ -74,7 +75,7 @@
 			// $(images,elem).css("opacity","0.01");
 
 			// scroll, obvious. resize, could bring more into view. orientation, same.
-			$window.on(["scroll", "resize", "orientationchange"].join("." + widgetName + " "), function() {
+			$window.add(opts.secondaryScroll).on(["scroll", "resize", "orientationchange"].join("." + widgetName + " "), function() {
 
 				clearTimeout(self.scrollTimer);
 
@@ -261,6 +262,6 @@
 
 	});
 	$.extend($.lds.lazyLoad, {
-		version: "1.5.1"
+		version: "1.5.0"
 	});
 })(jQuery);
