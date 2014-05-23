@@ -17,9 +17,9 @@ or complicated functions to only show an image for a retina Mac on Chrome 31 bet
 function(){
 	var curDate = new Date(Date.now()),
 		hours = curDate.getHours();
-	if(window.devicePixelRatio > 1 
-		&& navigator.userAgent.indexOf("Chrome") > -1 
-		&&  navigator.userAgent.indexOf("Mac") > -1 
+	if(window.devicePixelRatio > 1
+		&& navigator.userAgent.indexOf("Chrome") > -1
+		&&  navigator.userAgent.indexOf("Mac") > -1
 		&& (hours => 14 && hours <= 16)){
 		return true;
 	}
@@ -35,7 +35,7 @@ Each image that is loaded is saved into sessionStorage with the path of the imag
 lazyLoad uses jQuery and the jQuery UI [Widget Factory](http://api.jqueryui.com/jQuery.widget/). This is a public release of an internally written plugin at my place of employment. We use the widget factory as a way to reduce overhead across our many plugins, thus the extra requirement.
 
 ```
-<script src="jquery.js"></script>  
+<script src="jquery.js"></script>
 <script src="jquery.ui.widget.js"></script>
 <script src="lds.lazyLoad.js"></script>
 ```
@@ -45,8 +45,8 @@ We use a `noscript` element wrapping an image to provide fallback for SEO and br
 Also add `data-` attributes of the source(s) of the image(s) you want to have injected.
 
 ```
-<noscript class="lazy" data-mobile="images/mobile.jpg" data-desktop="images/desktop.jpg" data-alt="description of image">  
-	<img src="images/desktop.jpg" />  
+<noscript class="lazy" data-mobile="images/mobile.jpg" data-desktop="images/desktop.jpg" data-alt="description of image">
+	<img src="images/desktop.jpg" />
 </noscript>
 ```
 
@@ -157,6 +157,12 @@ Default: ``
 method you can call to load a given image, or custom event on the image itself. useful if you want to load a specific hidden image.  Pass in the image that you want to load
 
 ## Changelog
+### 1.5.0
+* Fixes a bug where lazyload would fail after the first load when in Private mode in iOS Safari
+* The Fade effect on an image now occurs when an image changes as well as when it initally loads.
+* Images are fadded out before fadding in so the fade speed option one passes in should now be half what they were in previous versions to achieve the same effect.
+* Drops support for IE 8 and lower.
+
 ### 1.4.1
 * Moving the setting of the image opacity to within the loop where it changes from noscript to placeholder image. When it was just being fired on all images and you called the script multiple times, it would hide images that were already done.
 
