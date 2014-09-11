@@ -6,17 +6,7 @@
 * @requires	ui.core.js (1.8+)
 * @copyright	Copyright 2013 by Intellectual Reserve, Inc.
 */
-// this optionally wraps it in a define for AMD usage
-(function (factory) {
-	"use strict";
-	if (typeof define === "function" && define.amd) {
-		// AMD. Register as an anonymous module.
-		define(["jquery"], factory);
-	} else {
-		// Browser globals
-		factory(jQuery);
-	}
-}(function ($) {
+;(function ( $, window, document, undefined ) {
 	"use strict";	
 	var $window = $(window),
 		pluginName = "lazyLoad",
@@ -57,7 +47,7 @@
 		this._name = pluginName;
 		this.init();
 	}
-	Plugin.prototype = {
+	$.extend(Plugin.prototype, {
 		init: function() {
 			this._create();
 			this._init();
@@ -282,22 +272,20 @@
 			// make this load the current image
 			this.checkLocation(elem, true);
 		}
-	};
+	});
 
 	// A really lightweight plugin wrapper around the constructor, 
 	// preventing against multiple instantiations
-	$.fn[pluginName] = function ( options ) {
-		return this.each(function () {
-			if (!$.data(this, "plugin_" + pluginName)) {
-				$.data(this, "plugin_" + pluginName, new Plugin( this, options ));
-			} else {
-				if(typeof options === "string"){
-					var self = $.data(this, "plugin_" + pluginName);
-					self[options].apply(self);
-				}
+	$.fn[ pluginName ] = function ( options ) {
+		this.each(function() {
+			if ( !$.data( this, "plugin_" + pluginName ) ) {
+				$.data( this, "plugin_" + pluginName, new Plugin( this, options ) );
 			}
 		});
+
+		// chain jQuery functions
+		return this;
 	};
 	$.fn[pluginName].version = "@@version";
 
-}));
+})( jQuery, window, document );
