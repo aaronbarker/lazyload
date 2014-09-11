@@ -249,7 +249,9 @@
 				} catch (e) {}
 
 				$elem.off("load.lazyLoad").on("load.lazyLoad", function() {
-					self._trigger("onload", false, $elem);
+					if($.isFunction( opts.onload )){
+						opts.onload.apply($elem, false);
+					}
 				});
 			}
 		},
