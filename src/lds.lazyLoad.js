@@ -1,11 +1,11 @@
 /*!
- * lazyLoad
- * @description	loads images onto the page as you scroll down to them
- * @version		@@version - @@date
- * @author		Aaron Barker
- * @requires	ui.core.js (1.8+)
- * @copyright	Copyright 2013 by Intellectual Reserve, Inc.
- */
+* lazyLoad
+* @description	loads images onto the page as you scroll down to them
+* @version		@@version - @@date
+* @author		Aaron Barker
+* @requires	ui.core.js (1.8+)
+* @copyright	Copyright 2013 by Intellectual Reserve, Inc.
+*/
 // this optionally wraps it in a define for AMD usage
 (function (factory) {
 	"use strict";
@@ -246,8 +246,7 @@
 			return newSrc || elem.data(opts.srcFallback);
 		},
 		setSrc: function($elem, newSrc) {
-			var opts = this.options,
-				self = this;
+			var opts = this.options;
 
 			if (newSrc && newSrc !== $elem.attr("src")) {
 
@@ -271,9 +270,9 @@
 					sessionStorage.setItem(newSrc, "loaded");
 				} catch (e) {}
 
-				$elem.off("load.lazyLoad").on("load.lazyLoad", function() {
+				$elem.off("load."+pluginName).on("load."+pluginName, function() {
 					if($.isFunction( opts.onload )){
-						opts.onload.apply($elem, false);
+						opts.onload.call($elem, false);
 					}
 				});
 			}
@@ -297,7 +296,7 @@
 					self[options].apply(self);
 				}
 			}
-	});
+		});
 	};
 	$.fn[pluginName].version = "@@version";
 
