@@ -11,6 +11,7 @@
   "browser": true,
   "smarttabs": true,
   "globals" : {
-    "jQuery": true
+    "jQuery": true,
+    "define": true
   }
 }
