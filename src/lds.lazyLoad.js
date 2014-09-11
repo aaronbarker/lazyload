@@ -6,12 +6,21 @@
  * @requires	ui.core.js (1.8+)
  * @copyright	Copyright 2013 by Intellectual Reserve, Inc.
  */
-(function($) {
+// this optionally wraps it in a define for AMD usage
+(function (factory) {
 	"use strict";
-	var $window = $(window);
-
-	$.widget("lds.lazyLoad", {
-		options: {
+	if (typeof define === "function" && define.amd) {
+		// AMD. Register as an anonymous module.
+		define(["jquery"], factory);
+	} else {
+		// Browser globals
+		factory(jQuery);
+	}
+}(function ($) {
+	"use strict";	
+	var $window = $(window),
+		pluginName = "lazyLoad",
+		defaults = {
 			lazyClass: "lazy",
 			doneClass: "lazyLoadDone",
 			placeholder: "data:image/gif;base64,R0lGODlhAQABAPAAAAAAAAAAACH/C1hNUCBEYXRhWE1QRT94cGFja2V0IDE2MDZCIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkZERDQ1MzVGMkZGMTExRTFBQTE4OTE5ODk4MQAh+QQFAAAAACwAAAAAAQABAEACAkQBADs=",
@@ -38,6 +47,20 @@
 					return $(window).width() > 600;
 				}
 			}
+		};
+
+	// The actual plugin constructor
+	function Plugin( element, options ) {
+		this.element = $(element);
+		this.options = $.extend( {}, defaults, options) ;
+		this._defaults = defaults;
+		this._name = pluginName;
+		this.init();
+	}
+	Plugin.prototype = {
+		init: function() {
+			this._create();
+			this._init();
 		},
 		_create: function() {
 			var opts = this.options,
@@ -259,14 +282,23 @@
 		loadNow: function(elem) {
 			// make this load the current image
 			this.checkLocation(elem, true);
-		},
-		destroy: function() {
-			$.Widget.prototype.destroy.apply(this, arguments); // call the default stuff
-			$(this.element).add(window).unbind("." + this.widgetName);
 		}
+	};
 
+	// A really lightweight plugin wrapper around the constructor, 
+	// preventing against multiple instantiations
+	$.fn[pluginName] = function ( options ) {
+		return this.each(function () {
+			if (!$.data(this, "plugin_" + pluginName)) {
+				$.data(this, "plugin_" + pluginName, new Plugin( this, options ));
+			} else {
+				if(typeof options === "string"){
+					var self = $.data(this, "plugin_" + pluginName);
+					self[options].apply(self);
+				}
+			}
 	});
-	$.extend($.lds.lazyLoad, {
-		version: "@@version"
-	});
-})(jQuery);
+	};
+	$.fn[pluginName].version = "@@version";
+
+}));
