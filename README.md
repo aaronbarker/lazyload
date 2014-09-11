@@ -32,11 +32,10 @@ The test should just return a boolean, the plugin doesn't care how you get to th
 Each image that is loaded is saved into sessionStorage with the path of the image as the key. When the lazyLoad runs, it checks sessionStorage for each path and if it is found, will load it onto the page instantly since we know it's in the cache already.
 
 ## Requirements
-lazyLoad uses jQuery and the jQuery UI [Widget Factory](http://api.jqueryui.com/jQuery.widget/). This is a public release of an internally written plugin at my place of employment. We use the widget factory as a way to reduce overhead across our many plugins, thus the extra requirement.
+lazyLoad uses jQuery, and that is the only additional requirement.
 
 ```
 <script src="jquery.js"></script>
-<script src="jquery.ui.widget.js"></script>
 <script src="lds.lazyLoad.js"></script>
 ```
 
@@ -157,6 +156,9 @@ Default: ``
 method you can call to load a given image, or custom event on the image itself. useful if you want to load a specific hidden image.  Pass in the image that you want to load
 
 ## Changelog
+### 2.0.0
+* Removed widget factory requirement and moved to [jquery-boilerplate](https://github.com/jquery-boilerplate/jquery-boilerplate) structure.
+
 ### 1.5.0
 * Fixes a bug where lazyload would fail after the first load when in Private mode in iOS Safari
 * The Fade effect on an image now occurs when an image changes as well as when it initally loads.
