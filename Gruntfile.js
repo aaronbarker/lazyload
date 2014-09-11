@@ -46,16 +46,16 @@ module.exports = function(grunt) {
 		copy: {
 			cdn: {
 				files: [{
-					src: "dist/lds.<%= pkg.name %>.js",
+					src: "dist/lds.<%= pkg.name %>.min.js",
 					dest: "../../../cdn/trunk/src/main/resources/ml/ldsorg/ver/scripts/<%= pkg.folder %>/lds.<%= pkg.name %><%= pkg.version %>.min.js"
 				}, {
-					src: "dist/lds.<%= pkg.name %>.js",
+					src: "dist/lds.<%= pkg.name %>.min.js",
 					dest: "../../../cdn/tags/test/ml/ldsorg/ver/scripts/<%= pkg.folder %>/lds.<%= pkg.name %><%= pkg.version %>.min.js"
 				}, {
-					src: "dist/lds.<%= pkg.name %>.js",
+					src: "dist/lds.<%= pkg.name %>.min.js",
 					dest: "../../../cdn/tags/stage/ml/ldsorg/ver/scripts/<%= pkg.folder %>/lds.<%= pkg.name %><%= pkg.version %>.min.js"
 				}, {
-					src: "dist/lds.<%= pkg.name %>.js",
+					src: "dist/lds.<%= pkg.name %>.min.js",
 					dest: "../../../cdn/tags/prod/ml/ldsorg/ver/scripts/<%= pkg.folder %>/lds.<%= pkg.name %><%= pkg.version %>.min.js"
 				}]
 			}
